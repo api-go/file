@@ -1,4 +1,4 @@
-# go/file
+# go/file (v1.0.4)
 
 `go/file` 是一个为 Go 语言项目设计的轻量级、高性能且具备内存安全特性的文件系统操作与资源管理库。它封装了常见的文件 IO、对象序列化、归档压缩及内存文件映射功能，旨在通过统一的 API 简化开发工作，并提供内置的安全闭环保障。
 
@@ -9,6 +9,50 @@
 *   **安全闭环**: 原生支持敏感数据安全缓存 (`SafeBuf`)，结合内存零填充 (`ZeroMemory`)，极大降低了密钥等敏感信息在内存中泄露的风险。
 *   **全功能 IO**: 提供从基础 IO 到递归目录操作、文件原地替换及高效压缩归档的一站式解决方案。
 
+## 🤖 开发与 AI 指导 (Developer & AI Guidelines)
+
+1.  **内存安全优先**: 处理敏感文件时，优先使用 `SafeLoad` 系列，并通过 `SafeBuf` 接口操作。
+2.  **高性能 IO**: 在文件 IO 高并发场景下，默认采用 `WriteBytes` 以保证写入性能。
+3.  **语义一致性**: 序列化/反序列化（`Unmarshal/Marshal`）通过 `convert.To` 处理自动映射，无需关心字段名不一致问题。
+4.  **资源管理**: 任何归档提取或 IO 流操作结束后，必须确保对应资源被 `Close()`。
+
+## 快速入门 (Quick Start)
+
+### 1. 高性能文件读写
+无需手动处理 `os.OpenFile` 和 `defer Close`，支持物理文件与内存模拟文件透明切换。
+
+```go
+import "apigo.cc/go/file"
+
+// 简单读取与写入
+content := file.MustRead("config.txt")
+file.Write("log.txt", "operation success")
+
+// 按行读取
+lines := file.MustReadLines("list.txt")
+```
+
+### 2. 配置文件自动序列化
+自动识别 YAML/JSON，并支持 snake_case 到 CamelCase 的智能字段映射。
+
+```go
+type AppConfig struct {
+    UserName string `yaml:"user_name"`
+    Port     int    `json:"port"`
+}
+
+var cfg AppConfig
+// 自动读取、判别并完成映射
+err := file.UnmarshalFile("config.yaml", &cfg)
+```
+
+### 3. 原子配置补丁更新
+先读取文件，将补丁部分通过智能映射覆盖并回写，适合增量修改配置文件。
+
+```go
+// 自动读取 -> 智能 Patch -> 写回
+file.PatchFile("data.json", map[string]any{"debug": true})
+```
 
 ## 🛠 API Reference
 
@@ -55,41 +99,6 @@
 - `func LoadFileToB64(filename string) *MemFileB64`: 将文件转换为 B64 结构（常用于嵌入式资源）。
 - `func LoadFilesToMemoryFromB64(b64File *MemFileB64)`: 从 B64 结构恢复文件到内存。
 - `func LoadFilesToMemoryFromJson(jsonFiles string)`: 从 JSON 串格式的 B64 资源恢复内存文件。
-
-## 快速入门
-
-### 文件操作
-```go
-import "apigo.cc/go/file"
-
-// 简单读取与写入
-content := file.MustRead("config.txt")
-file.Write("log.txt", "operation success")
-```
-
-### 序列化与自动映射
-```go
-// 自动判别 JSON/YAML 并处理驼峰命名映射
-var cfg AppConfig
-err := file.UnmarshalFile("config.yaml", &cfg)
-```
-
-### 高性能内存资源加载
-```go
-// 加载配置，压缩并加密存储在内存中
-file.SafeLoadFileToMemoryWithCompress("secrets.json")
-// 读取时自动解密
-mf := file.ReadFileFromMemory("secrets.json")
-plain := mf.GetSafeData()
-defer plain.Close()
-```
-
-## 主要模块
-
-1.  **Filesystem**: 包含文件读写、复制、移动、删除及通配符搜索等标准 IO API。
-2.  **Object**: 提供 `UnmarshalFile` 和 `MarshalFile`，负责配置文件与内存对象的高级映射。
-3.  **Archive**: 封装了 `tar`, `gzip`, `zip` 等归档与压缩协议，支持目录归档与提取。
-4.  **Memory**: 基于内存的轻量级文件系统接口，支持资源的高效加载与安全管理。
 
 ## 许可证
 
