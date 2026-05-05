@@ -7,7 +7,7 @@ import (
 	"strings"
 	"sync"
 
-	"apigo.cc/go/convert"
+	"apigo.cc/go/cast"
 	"gopkg.in/yaml.v3"
 )
 
@@ -41,8 +41,8 @@ func UnmarshalFile(filename string, to any) error {
 	if err != nil {
 		return err
 	}
-	
-	convert.To(in, to)
+
+	cast.Convert(to, in)
 	return nil
 }
 
@@ -96,6 +96,6 @@ func PatchFile(filename string, patch any) error {
 			return err
 		}
 	}
-	convert.To(patch, &current)
+	cast.Convert(&current, patch)
 	return MarshalFilePretty(filename, current)
 }

@@ -30,10 +30,9 @@
 
 | Benchmark | ops | 耗时 (ns/op) |
 | :--- | :--- | :--- |
-| MarshalFile/Normal | 10000 | 111,770 |
-| MarshalFile/Pretty | 10000 | 109,581 |
-| UnmarshalFile/Normal | 52528 | 22,172 |
-| UnmarshalFile/X | 46568 | 24,833 |
+| MarshalFile/Normal | 10000 | 101,058 |
+| MarshalFile/Pretty | 10000 | 105,661 |
+| UnmarshalFile | 46378 | 25,102 |
 
 ## 3. 系统鲁棒性测试
 - **不存在的文件**: 验证 `UnmarshalFile` 返回 `os.IsNotExist` 类型错误。

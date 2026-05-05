@@ -2,6 +2,7 @@ package file
 
 import (
 	"bufio"
+	"fmt"
 	"io"
 	"os"
 	"os/exec"
@@ -23,16 +24,13 @@ func EnsureParentDir(filename string) {
 	if pos < 0 {
 		return
 	}
-	path := filename[0:pos]
-	if _, err := os.Stat(path); err != nil {
-		_ = os.MkdirAll(path, 0755)
-	}
+	_ = os.MkdirAll(filename[:pos], 0755)
 }
 
 func EnsureDirSuffix(path string) string {
-	const spe = string(os.PathSeparator)
-	if !strings.HasSuffix(path, spe) {
-		return path + spe
+	const sep = string(os.PathSeparator)
+	if !strings.HasSuffix(path, sep) {
+		return path + sep
 	}
 	return path
 }
@@ -266,8 +264,14 @@ func RunCommand(command string, args ...string) ([]string, error) {
 	cmd := exec.Command(command, args...)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("command execution failed: %w, output: %s", err, string(out))
 	}
-	lines := strings.Split(strings.TrimSpace(string(out)), "\n")
+	rawLines := strings.Split(strings.TrimSpace(string(out)), "\n")
+	var lines []string
+	for _, line := range rawLines {
+		if trimmed := strings.TrimSpace(line); trimmed != "" {
+			lines = append(lines, trimmed)
+		}
+	}
 	return lines, nil
 }
