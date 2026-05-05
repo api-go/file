@@ -7,6 +7,7 @@ import (
 	"sync"
 	"time"
 
+	"apigo.cc/go/cast"
 	"apigo.cc/go/encoding"
 	"apigo.cc/go/safe"
 )
@@ -40,7 +41,7 @@ var (
 
 func (mf *MemFile) GetData() []byte {
 	if mf.Compressed && len(mf.Data) > 0 {
-		return MustGunzip(mf.Data)
+		return cast.As(Decompress(mf.Data, "gzip"))
 	}
 	return mf.Data
 }
@@ -197,7 +198,7 @@ func LoadFileToB64(filename string) *MemFileB64 {
 func LoadFilesToMemoryFromB64(b64File *MemFileB64) {
 	if data, err := encoding.UnBase64(b64File.DataB64); err == nil {
 		if b64File.Compressed {
-			data = MustGunzip(data)
+			data = cast.As(Decompress(data, "gzip"))
 		}
 		memFile := MemFile{
 			Name:    b64File.Name,

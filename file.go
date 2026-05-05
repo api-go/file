@@ -76,19 +76,9 @@ func ReadBytes(filename string) ([]byte, error) {
 	return os.ReadFile(filename)
 }
 
-func MustReadBytes(filename string) []byte {
-	buf, _ := ReadBytes(filename)
-	return buf
-}
-
 func Read(filename string) (string, error) {
 	buf, err := ReadBytes(filename)
 	return string(buf), err
-}
-
-func MustRead(filename string) string {
-	buf, _ := Read(filename)
-	return buf
 }
 
 func ReadLines(filename string) ([]string, error) {
@@ -107,11 +97,6 @@ func ReadLines(filename string) ([]string, error) {
 		lines = append(lines, scanner.Text())
 	}
 	return lines, scanner.Err()
-}
-
-func MustReadLines(filename string) []string {
-	lines, _ := ReadLines(filename)
-	return lines
 }
 
 func WriteBytes(filename string, content []byte) error {
@@ -253,11 +238,6 @@ func ReadDir(filename string) ([]FileInfo, error) {
 		}
 	}
 	return out, nil
-}
-
-func MustReadDir(filename string) []FileInfo {
-	files, _ := ReadDir(filename)
-	return files
 }
 
 func RunCommand(command string, args ...string) ([]string, error) {

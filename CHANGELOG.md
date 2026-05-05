@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.7] - 2026-05-06
+- **设计哲学对齐**：全面废除 `Must` 前缀函数（`MustRead`, `MustReadBytes`, `MustReadLines`, `MustReadDir`, `MustGzip`, `MustGunzip`, `MustZip`, `MustUnzip`），改为配合 `go/cast` 的 `As` 函数消除摩擦。
+- **内部优化**：重构 `memory.go` 以移除对废弃 `Must` 函数的内部依赖。
+
+## [1.0.6] - 2026-05-01
+- (同步版本号)
+
 ## [1.0.5] - 2026-05-05
 - **性能优化**: 优化 `EnsureParentDir`，减少冗余的系统调用。
 - **基础设施对齐**: `UnmarshalFile` 迁移至 `cast.To` 语义对齐（内部仍使用 `Convert` 确保指针更新）。

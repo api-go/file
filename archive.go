@@ -50,11 +50,6 @@ func Decompress(data []byte, cType string) ([]byte, error) {
 	return io.ReadAll(r)
 }
 
-func MustGzip(data []byte) []byte   { b, _ := Compress(data, "gzip"); return b }
-func MustGunzip(data []byte) []byte { b, _ := Decompress(data, "gzip"); return b }
-func MustZip(data []byte) []byte    { b, _ := Compress(data, "zlib"); return b }
-func MustUnzip(data []byte) []byte  { b, _ := Decompress(data, "zlib"); return b }
-
 func Extract(srcFile, destDir string, stripRoot bool) error {
 	f, err := os.Open(srcFile)
 	if err != nil {

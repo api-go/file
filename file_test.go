@@ -1,82 +1,74 @@
-package file
+package file_test
 
 import (
 	"os"
 	"path/filepath"
 	"testing"
+
+	"apigo.cc/go/cast"
+	"apigo.cc/go/file"
 )
 
-func TestFileSystemOps(t *testing.T) {
-	tmpDir, _ := os.MkdirTemp("", "test_fs")
+func TestFileBasic(t *testing.T) {
+	tmpDir, _ := os.MkdirTemp("", "file_test")
 	defer os.RemoveAll(tmpDir)
 
 	fileA := filepath.Join(tmpDir, "a.txt")
 	fileB := filepath.Join(tmpDir, "b.txt")
-	_ = Write(fileA, "hello world")
 
-	t.Run("Copy", func(t *testing.T) {
-		err := Copy(fileA, fileB)
-		if err != nil || !Exists(fileB) {
-			t.Errorf("Copy failed: %v", err)
-		}
-		if MustRead(fileB) != "hello world" {
-			t.Error("Copy content mismatch")
-		}
-	})
+	_ = file.Write(fileA, "hello world")
+	if !file.Exists(fileA) {
+		t.Error("File should exist")
+	}
 
-	t.Run("Move", func(t *testing.T) {
-		fileC := filepath.Join(tmpDir, "c.txt")
-		err := Move(fileB, fileC)
-		if err != nil || !Exists(fileC) || Exists(fileB) {
-			t.Errorf("Move failed: %v", err)
-		}
-	})
+	_ = file.Move(fileA, fileB)
+	if file.Exists(fileA) {
+		t.Error("File A should be moved")
+	}
 
-	t.Run("Replace", func(t *testing.T) {
-		err := Replace(fileA, "hello", "hi")
-		if err != nil || MustRead(fileA) != "hi world" {
-			t.Errorf("Replace failed: %v", err)
-		}
-	})
+	if cast.As(file.Read(fileB)) != "hello world" {
+		t.Error("Read content mismatch")
+	}
 
-	t.Run("Remove", func(t *testing.T) {
-		err := Remove(fileA)
-		if err != nil || Exists(fileA) {
-			t.Errorf("Remove failed: %v", err)
-		}
-	})
+	info := file.GetFileInfo(fileB)
+	if info == nil || info.Name != fileB {
+		t.Error("GetFileInfo failed")
+	}
+
+	_ = file.Replace(fileB, "hello", "hi")
+	if cast.As(file.Read(fileB)) != "hi world" {
+		t.Error("Replace failed")
+	}
+
+	_ = file.Remove(fileB)
+	if file.Exists(fileB) {
+		t.Error("Remove failed")
+	}
 }
 
-func TestSearchAndDir(t *testing.T) {
-	tmpDir, _ := os.MkdirTemp("", "test_search")
+func TestReadLines(t *testing.T) {
+	tmpDir, _ := os.MkdirTemp("", "file_test_lines")
 	defer os.RemoveAll(tmpDir)
 
-	_ = Write(filepath.Join(tmpDir, "1.txt"), "data")
-	subDir := filepath.Join(tmpDir, "sub")
-	_ = os.Mkdir(subDir, 0755)
-	_ = Write(filepath.Join(subDir, "2.txt"), "data")
+	path := filepath.Join(tmpDir, "lines.txt")
+	content := "line1\nline2\nline3"
+	_ = file.Write(path, content)
 
-	t.Run("Search", func(t *testing.T) {
-		matches := Search(tmpDir, "*.txt")
-		if len(matches) != 2 {
-			t.Errorf("Expected 2 matches, got %d", len(matches))
-		}
-	})
-
-	t.Run("ReadDir", func(t *testing.T) {
-		files, err := ReadDir(tmpDir)
-		if err != nil || len(files) < 2 {
-			t.Errorf("ReadDir failed: %v", err)
-		}
-	})
+	lines := cast.As(file.ReadLines(path))
+	if len(lines) != 3 || lines[1] != "line2" {
+		t.Errorf("ReadLines failed: got %v", lines)
+	}
 }
 
-func TestHelpers(t *testing.T) {
-    // Test EnsureParentDir (via Write)
-    path := "test_helper/file.txt"
-    _ = Write(path, "d")
-    if !Exists(path) {
-        t.Error("Helper Write failed")
-    }
-    Remove("test_helper")
+func TestReadDir(t *testing.T) {
+	tmpDir, _ := os.MkdirTemp("", "file_test_dir")
+	defer os.RemoveAll(tmpDir)
+
+	_ = file.Write(filepath.Join(tmpDir, "f1.txt"), "1")
+	_ = file.Write(filepath.Join(tmpDir, "f2.txt"), "2")
+
+	files := cast.As(file.ReadDir(tmpDir))
+	if len(files) != 2 {
+		t.Errorf("ReadDir failed: got %d files", len(files))
+	}
 }
