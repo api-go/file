@@ -175,6 +175,19 @@ func Remove(path string) error {
 	return os.RemoveAll(path)
 }
 
+func Mkdir(path string) error {
+	return os.MkdirAll(path, 0755)
+}
+
+func Open(filename string) (*os.File, error) {
+	return os.Open(filename)
+}
+
+func Create(filename string) (*os.File, error) {
+	EnsureParentDir(filename)
+	return os.Create(filename)
+}
+
 func Move(src, dst string) error {
 	EnsureParentDir(dst)
 	return os.Rename(src, dst)
