@@ -2,6 +2,7 @@ package file
 
 import (
 	"bufio"
+	"context"
 	"fmt"
 	"io"
 	"os"
@@ -9,6 +10,9 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+
+	"apigo.cc/go/cast"
+	"apigo.cc/go/jsmod"
 )
 
 type FileInfo struct {
@@ -267,4 +271,72 @@ func RunCommand(command string, args ...string) ([]string, error) {
 		}
 	}
 	return lines, nil
+}
+
+// RealPath 返回客观的物理绝对路径，处理软连接和相对路径
+func RealPath(path string) string {
+	abs, err := filepath.Abs(path)
+	if err != nil {
+		return path
+	}
+
+	// 尝试解析软连接
+	real, err := filepath.EvalSymlinks(abs)
+	if err == nil {
+		return real
+	}
+
+	// 如果文件不存在，EvalSymlinks 会失败，此时返回绝对路径即可（后续写入操作会处理）
+	return abs
+}
+
+// VerifyPathForSafeMode 在安全模式下校验路径是否在 AllowedDirs 白名单内
+func VerifyPathForSafeMode(ctx context.Context, path string) (string, error) {
+	// 如果不是安全模式，直接返回 RealPath
+	if ctx == nil || !jsmod.IsSafeMode(ctx) {
+		return RealPath(path), nil
+	}
+
+	// 1. 获取白名单 (约定从 ctx 获取 "AllowedDirs")
+	var allowedDirs []string
+	cast.Convert(&allowedDirs, ctx.Value("AllowedDirs"))
+	if len(allowedDirs) == 0 {
+		return "", fmt.Errorf("file: access denied, AllowedDirs not found in context")
+	}
+
+	// 2. 获取物理路径
+	real := RealPath(path)
+
+	// 3. 校验逻辑：判断当前物理路径是否以任何一个白名单目录为前缀
+	isAllowed := false
+	for _, dir := range allowedDirs {
+		if strings.HasPrefix(real, dir) {
+			isAllowed = true
+			break
+		}
+	}
+
+	// 4. 写操作保护：如果路径不存在，追溯其存在的父目录权限
+	if !isAllowed {
+		temp := real
+		for temp != "" && temp != string(os.PathSeparator) {
+			temp = filepath.Dir(temp)
+			if _, err := os.Stat(temp); err == nil {
+				// 找到了第一个存在的祖先目录，检查它是否受控
+				for _, dir := range allowedDirs {
+					if strings.HasPrefix(temp, dir) {
+						isAllowed = true
+						break
+					}
+				}
+				break
+			}
+		}
+	}
+
+	if !isAllowed {
+		return "", fmt.Errorf("file: permission denied for path %s", path)
+	}
+
+	return real, nil
 }
