@@ -123,6 +123,17 @@ func Write(filename string, content string) error {
 	return WriteBytes(filename, []byte(content))
 }
 
+func Append(filename string, content []byte) error {
+	EnsureParentDir(filename)
+	f, err := os.OpenFile(filename, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	_, err = f.Write(content)
+	return err
+}
+
 func Copy(from, to string) error {
 	fromStat, err := os.Stat(from)
 	if err != nil {
