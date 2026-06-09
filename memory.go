@@ -186,7 +186,7 @@ func LoadFileToB64(filename string) *MemFileB64 {
 					ModTime:    info.ModTime(),
 					IsDir:      false,
 					Size:       info.Size(),
-					DataB64:    encoding.Base64(data),
+					DataB64:    []byte(encoding.Base64(data)),
 					Compressed: compressed,
 				}
 			}

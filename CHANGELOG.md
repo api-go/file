@@ -1,5 +1,8 @@
 # Changelog
 
+## v1.5.2 (2026-06-08)
+- **JS 对齐**: 将所有注册到 `jsmod` 的导出方法名统一为 PascalCase（如 `Read`, `Write`, `GetFileInfo`），消除 JS 环境下的调用摩擦。
+
 ## [1.3.3] - 2026-05-30
 - **新增**: 注册到 `jsmod`，将所有文件操作方法（Read/Write/Archive 等）注册为高危方法（unsafeList），确保安全沙箱隔离。
 
