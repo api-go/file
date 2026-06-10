@@ -308,9 +308,9 @@ func VerifyPathForSafeMode(ctx context.Context, path string) (string, error) {
 		return RealPath(path), nil
 	}
 
-	// 1. 获取白名单 (约定从 ctx 获取 "AllowedDirs")
+	// 1. 获取白名单
 	var allowedDirs []string
-	cast.Convert(&allowedDirs, ctx.Value("AllowedDirs"))
+	cast.Convert(&allowedDirs, jsmod.Get(ctx, "AllowedDirs"))
 	if len(allowedDirs) == 0 {
 		return "", fmt.Errorf("file: access denied, AllowedDirs not found in context")
 	}
