@@ -3,15 +3,15 @@ module apigo.cc/go/file
 go 1.25.0
 
 require (
-	apigo.cc/go/cast v1.5.0
-	apigo.cc/go/encoding v1.5.0
-	apigo.cc/go/jsmod v1.5.0
-	apigo.cc/go/safe v1.5.0
+	apigo.cc/go/cast v1.5.2
+	apigo.cc/go/encoding v1.5.3
+	apigo.cc/go/jsmod v1.5.3
+	apigo.cc/go/safe v1.5.1
 	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
-	apigo.cc/go/rand v1.5.0 // indirect
+	apigo.cc/go/rand v1.5.2
 	github.com/kr/pretty v0.3.0 // indirect
 	github.com/rogpeppe/go-internal v1.14.1 // indirect
 	golang.org/x/crypto v0.52.0 // indirect
