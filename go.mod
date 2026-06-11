@@ -5,7 +5,7 @@ go 1.25.0
 require (
 	apigo.cc/go/cast v1.5.2
 	apigo.cc/go/encoding v1.5.3
-	apigo.cc/go/jsmod v1.5.3
+	apigo.cc/go/jsmod v1.5.2
 	apigo.cc/go/safe v1.5.1
 	gopkg.in/yaml.v3 v3.0.1
 )
