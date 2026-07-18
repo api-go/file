@@ -11,7 +11,7 @@ require (
 )
 
 require (
-	apigo.cc/go/rand v1.5.3
+	apigo.cc/go/rand v1.5.3 // indirect
 	github.com/kr/pretty v0.3.0 // indirect
 	github.com/rogpeppe/go-internal v1.14.1 // indirect
 	golang.org/x/crypto v0.52.0 // indirect
