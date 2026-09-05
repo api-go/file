@@ -1,5 +1,8 @@
 # Changelog
 
+## v1.5.8 (2026-09-05)
+- **依赖对齐**: 将 `encoding` 与 `safe` 升级至当前已发布版本。
+
 ## v1.5.7 (2026-09-05)
 - **YAML 统一**: `UnmarshalFile`、`MarshalFile` 和 `MarshalFilePretty` 改用 `cast` 的 YAML 编解码能力，移除对 yaml.v3 的直接调用。
 - **字段映射**: YAML 文件到 Struct 的映射现在与 JSON 一致，忽略键名大小写及分隔符差异。
