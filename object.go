@@ -8,7 +8,6 @@ import (
 	"sync"
 
 	"apigo.cc/go/cast"
-	"gopkg.in/yaml.v3"
 )
 
 var fileLocksLock = sync.Mutex{}
@@ -32,16 +31,14 @@ func UnmarshalFile(filename string, to any) error {
 	}
 
 	isYaml := strings.HasSuffix(filename, ".yml") || strings.HasSuffix(filename, ".yaml")
-	var in any
 	if isYaml {
-		err = yaml.Unmarshal(data, &in)
-	} else {
-		err = json.Unmarshal(data, &in)
-	}
-	if err != nil {
-		return err
+		return cast.UnmarshalYAML(data, to)
 	}
 
+	var in any
+	if err = json.Unmarshal(data, &in); err != nil {
+		return err
+	}
 	cast.Convert(to, in)
 	return nil
 }
@@ -62,7 +59,7 @@ func marshalFile(filename string, data any, indent bool) error {
 	var buf []byte
 	var err error
 	if isYaml {
-		buf, err = yaml.Marshal(data)
+		buf, err = cast.ToYAMLBytes(data)
 	} else {
 		buffer := bytes.Buffer{}
 		enc := json.NewEncoder(&buffer)

@@ -10,7 +10,7 @@
 
 *   **内存文件系统 (Memory FS)**：支持将文件加载到内存中进行读写，极大提升了测试场景与高频小文件读写的性能。支持安全加载（基于 `go/safe`）与自动压缩存储。
 *   **消除摩擦 (Frictionless)**：废除 `Must` 前缀函数，全面结合 `go/cast` 的 `As` 函数。
-*   **智能序列化**：提供 `UnmarshalFile` 与 `MarshalFile`，自动处理路径创建与序列化格式。
+*   **智能序列化**：提供 `UnmarshalFile` 与 `MarshalFile`，自动处理路径创建与序列化格式；YAML 与 JSON 共享 `cast` 的字段命名和模糊匹配规则。
 
 ## 🛠 API Reference
 

@@ -34,6 +34,20 @@ func TestUnmarshalFile(t *testing.T) {
 			t.Errorf("Expected Alice, got %s", ts.UserName)
 		}
 	})
+
+	yamlFile := filepath.Join(tmpDir, "test.yaml")
+	if err := os.WriteFile(yamlFile, []byte("USER-NAME: Alice\n"), 0644); err != nil {
+		t.Fatal(err)
+	}
+	t.Run("YAMLSmartMapping", func(t *testing.T) {
+		var value SnakeStruct
+		if err := UnmarshalFile(yamlFile, &value); err != nil {
+			t.Fatal(err)
+		}
+		if value.UserName != "Alice" {
+			t.Fatalf("expected Alice, got %s", value.UserName)
+		}
+	})
 }
 
 func TestMarshalFile(t *testing.T) {
