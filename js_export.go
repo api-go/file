@@ -3,7 +3,7 @@ package file
 import (
 	"context"
 
-	"apigo.cc/go/jsmod"
+	"github.com/api-go/jsmod"
 )
 
 func init() {

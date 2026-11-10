@@ -5,8 +5,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"apigo.cc/go/cast"
-	"apigo.cc/go/file"
+	"github.com/api-go/cast"
+	"github.com/api-go/file"
 )
 
 func TestFileBasic(t *testing.T) {

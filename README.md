@@ -37,15 +37,15 @@
 ## 📦 安装
 
 ```bash
-go get apigo.cc/go/file
+go get github.com/api-go/file
 ```
 
 ## 💡 示例
 
 ```go
 import (
-    "apigo.cc/go/file"
-    "apigo.cc/go/cast"
+    "github.com/api-go/file"
+    "github.com/api-go/cast"
 )
 
 // 读取文件内容，消除错误摩擦

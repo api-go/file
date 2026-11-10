@@ -11,8 +11,8 @@ import (
 	"strings"
 	"time"
 
-	"apigo.cc/go/cast"
-	"apigo.cc/go/jsmod"
+	"github.com/api-go/cast"
+	"github.com/api-go/jsmod"
 )
 
 type FileInfo struct {

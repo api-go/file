@@ -7,7 +7,7 @@ import (
 	"strings"
 	"sync"
 
-	"apigo.cc/go/cast"
+	"github.com/api-go/cast"
 )
 
 var fileLocksLock = sync.Mutex{}

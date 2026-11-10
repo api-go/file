@@ -7,9 +7,9 @@ import (
 	"sync"
 	"time"
 
-	"apigo.cc/go/cast"
-	"apigo.cc/go/encoding"
-	"apigo.cc/go/safe"
+	"github.com/api-go/cast"
+	"github.com/api-go/encoding"
+	"github.com/api-go/safe"
 )
 
 type MemFile struct {
